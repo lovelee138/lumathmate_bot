@@ -29,7 +29,8 @@ async def get_note(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 def main():
-    application = Application.builder().token("5591040510:AAGUOdFLHiog-FWDcO2m7l38ibpu8qNFE10").build()
+    config = load_config(filename="config/bot.ini", section="bot")
+    application = Application.builder().token(config["token"]).build()
 
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CommandHandler("help", help))
