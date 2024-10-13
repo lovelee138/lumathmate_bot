@@ -53,9 +53,13 @@ async def help_command(message: types.message):
 
 @dp.message(Command("get_note"))
 async def help_command(message: types.message):
-    note_name = get_last_note(message.from_user.id)
+    user_id = message.from_user.id
+    note_name = get_last_note(user_id)
     note = FSInputFile(f"notes/{note_name}")
-    await bot.send_document(chat_id=message.from_user.id, document=note)
+
+    await bot.send_message(chat_id=user_id, text="Твой последний конспект:")
+    await bot.send_document(chat_id=user_id, document=note)
+    await message.delete()
 
 
 async def main():
