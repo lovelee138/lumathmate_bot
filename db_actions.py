@@ -24,13 +24,13 @@ def connect(config):
         # connecting to the PostgreSQL server
         with ps.connect(**config) as conn:
             print('Connected to the PostgreSQL server.')
-            return conn, conn.cursor()
+            return conn.cursor()
     except (ps.DatabaseError, Exception) as error:
         print(error)
 
 
 def get_last_note(student_id):
-    connection, cursor = connect(load_config())
+    cursor = connect(load_config())
 
     request_last_note = f"SELECT * FROM notes_id WHERE student_id={student_id} ORDER BY date;"
     cursor.execute(request_last_note)
@@ -39,7 +39,7 @@ def get_last_note(student_id):
 
 
 def get_students(teacher_username):
-    connection, cursor = connect(load_config())
+    cursor = connect(load_config())
 
     request_students = f"SELECT student_username FROM students WHERE teacher_username='{teacher_username}';"
     cursor.execute(request_students)
@@ -49,5 +49,19 @@ def get_students(teacher_username):
 
     return students_usernames
 
+
+def is_signed_up(tg_id, status):
+    """In table 'all_members' it tries to find a member with its 'tg_id'.
+    Returns member_id, if it was found.
+    Else returns False."""
+
+    cursor = connect(load_config())
+
+    request_name= f"SELECT name FROM all_members WHERE tg_id={tg_id} AND status='student';"
+    cursor.execute(request_name)
+    
+    if len(cursor.fetchall()) == 0:
+        return False
+    return cursor.fetchall()
 
     
