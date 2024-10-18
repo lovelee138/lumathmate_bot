@@ -65,3 +65,9 @@ def is_signed_up(tg_id, status):
     return cursor.fetchall()
 
     
+def expand_all_members():
+    """In table 'all_members' it counts how many ids were created and generates next 100 ids"""
+
+    cursor = connect(load_config())
+    request_name = f";"
+    cursor.exe
