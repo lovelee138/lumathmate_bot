@@ -1,9 +1,17 @@
-HELP_COMMAND = """
-/start - регистрация в боте
-/help - список комманд
-/info - информация о боте
-
+HELP_COMMAND_STUDENT = """
 /get_note - получить последний конспект
+
+<b>/start</b> - <i>регистрация в боте</i>
+<b>/help</b> - <i>список комманд</i>
+<b>/info</b> - <i>информация о боте</i>
+"""
+HELP_COMMAND_TEACHER = """
+
+<b>/start</b> - <i>регистрация в боте</i>
+<b>/help</b> - <i>список комманд</i>
+<b>/info</b> - <i>информация о боте</i>
+
+<b>/send_note</b> - <i>отправить конспект</i>
 """
 
 START_MESSAGE = """

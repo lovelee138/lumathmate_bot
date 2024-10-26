@@ -13,7 +13,6 @@ class Authorization(StatesGroup):
     choosing_status = State()
     inputing_member_id = State()
     inputing_name = State()
-    authorizied = State()
 
 
 @router.message(StateFilter(None), Command("start"))
@@ -23,7 +22,7 @@ async def cmd_start(message: types.message, state: FSMContext, bot: Bot):
 
     if authorizied_user_id:
         authorizied_user_name = get_name_by_id(authorizied_user_id)
-        await bot.send_message(user_tg_id, f"Добро пожаловать, {authorizied_user_name}!")
+        await bot.send_message(user_tg_id, f"Добро пожаловать, {authorizied_user_name}!\nНажмите /help, чтобы посмотреть доступные команды.")
         await state.set_state(Authorization.authorizied)
     else:
         kb_status = authorization_kb.get_keyboard_status()
@@ -82,5 +81,5 @@ async def set_name(message: types.message, bot: Bot, state: FSMContext):
     user_data = await state.get_data()
     add_new_member(user_data["tg_id"], user_data["member_id"], user_data["name"], user_data["status"])
 
-    await bot.send_message(message.from_user.id, "Авторизация прошла успешно!\nНажмите /help, чтобы открыть список комманд.")
-    await state.set_state(Authorization.authorizied)
+    await bot.send_message(message.from_user.id, "Авторизация прошла успешно!\nНажмите /help, чтобы открыть список доступных команд.")
+    await state.clear()

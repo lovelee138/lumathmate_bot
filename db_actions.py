@@ -109,7 +109,7 @@ def expand_all_members():
 
 
 def get_name_by_id(id: int) -> str:
-    """It returns name of user by its id. If id is not defined then it returns 'None'"""
+    """It returns name of user by its member-id. If id is not defined then it returns 'None'"""
 
     conn, cursor = connect(load_config())
 
@@ -121,8 +121,25 @@ def get_name_by_id(id: int) -> str:
     conn.close()
 
     if len(name) == 0:
-        return False
+        return None
     return name[0][0]
+
+
+def get_status_by_id(id: int) -> str:
+    """It returns status of user by its tg-id. If id is not defined in table 'all_members' then it returns 'None'"""
+
+    conn, cursor = connect(load_config())
+
+    request = f"SELECT status FROM all_members WHERE tg_id={id};"
+    cursor.execute(request)
+    status = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    if len(status)==0:
+        return None
+    return status[0][0]
 
 
 def is_student_member_id_correct(id: int) -> bool:
@@ -175,7 +192,6 @@ def get_new_member_id(status: str) -> int:
 def add_new_member(tg_id, member_id, name, status):
     """This functions updates table 'all_members'."""
     conn, cursor = connect(load_config())
-    print(tg_id, member_id, name, status)
 
     request = f"UPDATE all_members set tg_id={tg_id}, name='{name}', status='{status}' WHERE member_id={member_id};"
     cursor.execute(request)
@@ -184,3 +200,101 @@ def add_new_member(tg_id, member_id, name, status):
     cursor.close()
     conn.close()
     return
+
+
+def get_member_id_by_tg_id(tg_id):
+    """This function returns member_id by tg_id"""
+
+    conn, cursor = connect(load_config())
+    request = f"SELECT member_id FROM all_members WHERE tg_id='{tg_id}';"
+    cursor.execute(request)
+
+    member_id = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+    if member_id:
+        return member_id[0][0]
+    else:
+        return False
+
+
+def is_student_name_correct(name, teacher_tg_id):
+    """This function checkes if there is a student with name 'name' for teacher with tg_id 'teacher_tg_id.
+    It returns student_id if it's true, else it returns FALSE"""
+
+    teacher_member_id = get_member_id_by_tg_id(teacher_tg_id)
+    if not teacher_member_id:
+        return False
+    
+    conn, cursor = connect(load_config())
+    
+    request = f"SELECT student_id FROM teacher_student WHERE teacher_id='{teacher_member_id}' AND name='{name}';"
+    cursor.execute(request)
+
+    student_id = cursor.fetchall()
+    cursor.close()
+    conn.close()
+
+    if student_id:
+        return student_id[0][0]
+    return False
+
+
+def get_student_name(student_member_id):
+    """This function returns student name (for teacher) by student_member_id"""
+    conn, cursor = connect(load_config())
+
+    request = f"SELECT name FROM teacher_student WHERE student_id='{student_member_id}';"
+    cursor.execute(request)
+
+    student_name = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    if student_name:
+        return student_name[0][0]
+    return False
+
+
+def get_last_note_number(student_member_id):
+    """This function returns number of last sent note by student_member_id.
+    If student has no any notes, returns 0."""
+    conn, cursor = connect(load_config())
+
+    request = f"SELECT last_number FROM number_notes WHERE student_id='{student_member_id}';"
+    cursor.execute(request)
+
+    number = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    if number:
+        return number[0][0]
+    else:
+        conn, cursor = connect(load_config())
+
+        request = f"INSERT INTO number_notes VALUES ('{student_member_id}', 0, 0);"
+        cursor.execute(request)
+
+        conn.commit()
+        cursor.close()
+        conn.close()
+        return 0
+    
+
+def is_note_number_correct(student_member_id, number):
+    """This function finds if there is such note number in table number_notes.
+    It returns True, if number_notes is there, else False."""
+    conn, cursor = connect(load_config())
+
+    request = f"SELECT number FROM notes_info WHERE student_id='{student_member_id}';"
+    cursor.execute(request)
+
+    numbers = list(key[0] for key in cursor.fetchall())
+    
+    if number in numbers:
+        return True
+    return False
