@@ -298,3 +298,20 @@ def is_note_number_correct(student_member_id, number):
     if number in numbers:
         return True
     return False
+
+
+def add_new_note(file_name, user_data, path, file_id):
+    """This function add new file to notes_info table.
+    User_data must be a dict with student_id, date, number, file_id"""
+    conn, cursor = connect(load_config())
+
+    request = "INSERT INTO notes_info VALUES('{}', {}, {}, '{}', '{}', '{}');".format(file_name, user_data["student_id"], user_data["number"], path, file_id, user_data["date"])
+    
+    cursor.execute(request)
+
+    with open(f"{path+file_name}_description.txt", "w") as descr_file:
+        descr_file.write(user_data["description"])
+    
+    conn.commit()
+    cursor.close()
+    conn.close()

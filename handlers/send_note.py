@@ -112,9 +112,14 @@ async def description(message: types.message, state: FSMContext):
     F.document,
     SendingNote.getting_file
 )
-async def get_file(message: types.message, state: FSMContext):
+async def get_file(message: types.message, state: FSMContext, bot: Bot):
     user_data = await state.get_data()
-    print(user_data)
+    name = f"{user_data['student_id']}_{user_data['date']}_{user_data['number']}.pdf"
+    path = f"./notes/"
+    await bot.download(message.document, destination=path+name)
+    add_new_note(name, user_data, path, message.document.file_id)
+    await message.answer("Файл успешно сохранен")
+    await state.clear()
 
 
 @router.callback_query(
