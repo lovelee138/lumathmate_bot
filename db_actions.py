@@ -1,6 +1,7 @@
 import psycopg2 as ps
 from configparser import ConfigParser
 import random
+from datetime import datetime
 
 
 def load_config(filename='./config/database.ini', section='postgresql'):
@@ -315,3 +316,21 @@ def add_new_note(file_name, user_data, path, file_id):
     conn.commit()
     cursor.close()
     conn.close()
+
+
+def get_list_of_notes(student_id: int) -> list:
+    """This function return list with note_data for student_id (member_id).
+    This notes sorted by date from new to old.
+    note_data - dict{"description": <path_to_txt>, "number": n, "date": date, "file_id": file_id, "file_path": <full_path_to_file}"""
+    conn, cursor = connect(load_config())
+
+    request = f"SELECT * from notes_info WHERE student_id='{student_id}';"
+
+    cursor.execute(request)
+
+    notes = cursor.fetchall()
+    notes = sorted(notes, key=lambda note: datetime.strptime(note[-1], r"%Y-%m-%d"))
+
+    return notes
+
+get_list_of_notes(71)

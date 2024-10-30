@@ -34,12 +34,12 @@ async def help_command(message: types.message):
 
 # For students
 
-@router.message(Command("get_note"))
-async def help_command(message: types.message, bot: Bot):
-    user_id = message.from_user.id
-    note_name = get_last_note(user_id)
-    note = FSInputFile(f"notes/{note_name}")
+# @router.message(Command("get_note"))
+# async def help_command(message: types.message, bot: Bot):
+#     user_id = message.from_user.id
+#     note_name = get_last_note(user_id)
+#     note = FSInputFile(f"notes/{note_name}")
 
-    await bot.send_message(chat_id=user_id, text="Твой последний конспект:")
-    await bot.send_document(chat_id=user_id, document=note)
-    await message.delete()
+#     await bot.send_message(chat_id=user_id, text="Твой последний конспект:")
+#     await bot.send_document(chat_id=user_id, document=note)
+#     await message.delete()
