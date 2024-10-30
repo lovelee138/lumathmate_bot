@@ -61,17 +61,20 @@ async def send_note(message: types.message, state: FSMContext, command: CommandO
         if student_id:
             await state.update_data(student_id=student_id)
             await message.answer(
-                'Напишите описание этого конспекта. Если описание не нужно, введите "далее"'
+                'Напишите описание этого конспекта. \
+                    Если описание не нужно, введите "далее"'
             )
             await state.set_state(SendingNote.getting_description)
         else:
             await message.answer(
-                "Введите имя ученика, которому вы хотите отправить конспект. Чтобы посмотреть список всех учеников нажмите /show_all_students"
+                "Введите имя ученика, которому вы хотите отправить конспект. \
+                    Чтобы посмотреть список всех учеников нажмите /show_all_students"
             )
             await state.set_state(SendingNote.identification)
     else:
         await message.answer(
-            "Введите имя ученика, которому вы хотите отправить конспект. Чтобы посмотреть список всех учеников нажмите /show_all_students"
+            "Введите имя ученика, которому вы хотите отправить конспект. \
+                Чтобы посмотреть список всех учеников нажмите /show_all_students"
         )
         await state.set_state(SendingNote.identification)
 

@@ -352,4 +352,22 @@ def get_list_of_notes(student_id: int) -> list:
     notes = cursor.fetchall()
     notes = sorted(notes, key=lambda note: datetime.strptime(note[-1], r"%Y-%m-%d"))
 
+    cursor.close()
+    conn.close()
     return notes
+
+
+def get_all_students(teacher_id: int) -> list:
+    """This function return list with student names of teacher."""
+    conn, cursor = connect(load_config())
+
+    request = f"SELECT student_id, name FROM teacher_student WHERE \
+        teacher_id ={teacher_id};"
+    cursor.execute(request)
+
+    students = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    return students

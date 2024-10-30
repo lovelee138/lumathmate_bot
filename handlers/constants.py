@@ -6,12 +6,12 @@ HELP_COMMAND_STUDENT = """
 <b>/info</b> - <i>информация о боте</i>
 """
 HELP_COMMAND_TEACHER = """
+<b>/send_note</b> - <i>отправить конспект</i>
+<b>/show_all_students</b> - <i>получить имена всех учеников</i>
 
 <b>/start</b> - <i>регистрация в боте</i>
 <b>/help</b> - <i>список комманд</i>
 <b>/info</b> - <i>информация о боте</i>
-
-<b>/send_note</b> - <i>отправить конспект</i>
 """
 
 START_MESSAGE = """
