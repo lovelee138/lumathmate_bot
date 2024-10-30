@@ -1,11 +1,11 @@
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 
-def get_keyboard_choice(n: int, next=False, previous=False):
+def get_keyboard_choice(start: int, end: int, next=False, previous=False):
     buttons = [
         [
             InlineKeyboardButton(text=f"{i}", callback_data=f"choice_{i}")
-            for i in range(1, n + 1)
+            for i in range(start, end)
         ]
     ]
     if next:
