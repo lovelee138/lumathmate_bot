@@ -1,0 +1,31 @@
+@startuml
+actor Member as mmb
+participant Bot as bot
+database DataBase as db 
+
+mmb -> bot : Вызов команды "/get_note"
+bot -> db : Запрос статуса участника
+db -> db: Получение статуса участника
+
+alt "status = teacher"
+db --> bot : Статус "Учитель"
+bot --> mmb : Эта команда недоступна
+else "status = student"
+db -> bot : Статус "Ученик"
+bot -> db : Запрос всех всех конспектов
+db -> db : Получение списка конспектов
+    alt "empty list of notes"
+    db -> bot : Пустой список
+    bot -> mmb : Конспектов пока нет
+    else "non-empty list of notes"
+    db -> bot : Список конспектов
+    bot -> mmb : Запрос номера конспекта
+    mmb <- mmb : Выбор конспекта
+    mmb -> bot : Выбор номера конспекта
+    bot -> db : Запрос файла с конспектом
+    db -> db : Получение файла с конспектом
+    db -> bot : Файл с конспектом
+    bot -> mmb : Файл с конспектом
+    end
+end
+@enduml
