@@ -15,6 +15,15 @@ router = Router()
 @router.message(Command("get_note"))
 async def get_note(message: types.message):
     student_id = get_member_id_by_tg_id(message.from_user.id)
+    status = get_status_by_id(message.from_user.id)
+
+    if status == "teacher":
+        await message.answer(
+            """Упс! Эта функция предназначена для учеников!
+Нажмите /help, чтобы просмотреть возможные команды."""
+        )
+        return
+
     notes = get_list_of_notes(student_id)
     kb = choice_kb.get_keyboard_choice(min(len(notes), 3), True)
     await message.answer(

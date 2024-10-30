@@ -115,6 +115,7 @@ async def description(message: types.message, state: FSMContext):
     user_data = await state.get_data()
 
     number = get_last_note_number(user_data["student_id"])
+
     await state.update_data(number=number + 1)
 
     await confirmation(message, state)
