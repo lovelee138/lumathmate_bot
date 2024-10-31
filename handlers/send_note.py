@@ -43,6 +43,7 @@ async def send_note(message: types.message, state: FSMContext, command: CommandO
     elif status == "student":
         await message.answer("Загружать конспекты могут только преподаватели :(")
         await state.clear()
+        return
     else:
         await message.answer("Ошибка, вы кто? Пройдите регистрацию /start")
 
