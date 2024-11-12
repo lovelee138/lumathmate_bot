@@ -1,6 +1,8 @@
 # LUMathMate_bot
 Этот телеграм-бот будет вашим помощником в преподавании и обучении математике.
+
 Его основная функция - упростить процесс взаимодействия между учеником и учителем, а именно передачу конспектов, дополнительных материалов, домашних заданий, отслеживании прогресса и других опций.
+
 Статус разработки: в разработке 
 
 ## Содержание
@@ -12,9 +14,9 @@
 
 ## Технологии
 - [python 3.10](https://www.python.org/downloads/release/python-3100/)
-- [aiogram 3.13] (https://www.google.com/url?sa=t&source=web&rct=j&opi=89978449&url=https://docs.aiogram.dev/uk-ua/latest/&ved=2ahUKEwiQnInozNaJAxVocfEDHcHeLW0QFnoECBgQAQ&usg=AOvVaw2426AC47_6UBPQDZT57rdj)
-- [PostgreSQL] (https://www.postgresql.org/)
-- [PlantUML] (https://plantuml.com/)
+- [aiogram 3.13](https://www.google.com/url?sa=t&source=web&rct=j&opi=89978449&url=https://docs.aiogram.dev/uk-ua/latest/&ved=2ahUKEwiQnInozNaJAxVocfEDHcHeLW0QFnoECBgQAQ&usg=AOvVaw2426AC47_6UBPQDZT57rdj)
+- [PostgreSQL](https://www.postgresql.org/)
+- [PlantUML](https://plantuml.com/)
 
 ## Использование
 К сожалению, на данном этапе разработки бот не доступен в общем доступе. Но совсем скоро он будет запущен на сервере, и вы сможете написать ему в [телеграме](https://t.me/lumathmate_bot).
