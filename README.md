@@ -24,6 +24,7 @@
 ## Разработка
 ### Требования
 Для работы проекта, необходимы библиотеки [aiogram 3.13](https://www.google.com/url?sa=t&source=web&rct=j&opi=89978449&url=https://docs.aiogram.dev/uk-ua/latest/&ved=2ahUKEwiQnInozNaJAxVocfEDHcHeLW0QFnoECBgQAQ&usg=AOvVaw2426AC47_6UBPQDZT57rdj), [psycopg2](https://pypi.org/project/psycopg2/)
+
 Для работы с UML-графами, необходим [Graphviz](https://graphviz.org/) и [PlantUML-плагин](https://marketplace.visualstudio.com/items?itemName=jebbs.plantuml) (для [VSCode](https://code.visualstudio.com/)).
 
 ### Установка зависимостей
