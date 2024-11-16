@@ -14,24 +14,32 @@
     <li id="student">
       <b>Student</b> - пользователь-ученик. В таблице
       <a href="system_model.html#er_physical">all_members</a> имеет значение
-      поля <a href="">status</a> равное "student". При инициализации сущности
+      поля <a href>status</a> равное "student". При инициализации сущности
       Student преподавателем ей присваивается собственный
-      <a href="">member_id</a>. При первичной авторизации считывается
-      <a href="">tg_id</a> и записывается в таблицу <a href="">all_members</a>.
+      <a href>member_id</a>. При первичной авторизации считывается
+      <a href>tg_id</a> и записывается в таблицу <a href>all_members</a>.
     </li>
 
     <li id="teacher">
       <b>Teacher</b> - пользователь-преподаватель. В таблице
       <a href="system_model.html#er_physical">all_members</a> имеет значение
-      поля <a href="">status</a> равное "student". При первичной авторизации
-      (регистрации) ему присваивается собственный <a href="">member_id</a>.
+      поля <a href>status</a> равное "student". При первичной авторизации
+      (регистрации) ему присваивается собственный <a href>member_id</a>.
     </li>
 
     <li><b>Note</b> - файл-конспект.</li>
   </ul>
 
-  <h2>Действия с БД (db_actions.py)</h2>
+  <h2>Действия с БД (db module)</h2>
+  <h3>get-actions:</h3>
   <ul>
-    <li></li>
+    <li><b>member_id</b> - возвращает <a href>member_id</a> по его <a
+        href>tg_id</a>. Если такого пользователя нет, то вызывает исключение.
+      Единственная функция в get-actions, которая обрабатывает tg_id.</li>
+    <li><b>status_by_id</b> - возвращает статус пользователя
+      ("student"/"teacher") по его <a href>member_id</a>. Если такого
+      пользователя нет, то вызывает исключение.</li>
+    <li><b>name_by_id</b> - возвращает имя пользователя по его <a
+        href>member_id</a></li>
   </ul>
 </body>

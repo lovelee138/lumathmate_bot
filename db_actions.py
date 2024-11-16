@@ -83,7 +83,7 @@ def expand_all_members():
     cursor.close()
     conn.close()
 
-
+# refactored
 def get_name_by_id(id: int) -> str:
     """It returns name of user by its member-id. If id is not defined then it returns 'None'"""
 
@@ -100,7 +100,7 @@ def get_name_by_id(id: int) -> str:
         return None
     return name[0][0]
 
-
+# refactored
 def get_status_by_id(id: int) -> str:
     """It returns status of user by its tg-id. If id is not defined in table 'all_members' then it returns 'None'"""
 
@@ -179,7 +179,7 @@ def add_new_member(tg_id, member_id, name, status):
     conn.close()
     return
 
-
+#refactored
 def get_member_id_by_tg_id(tg_id):
     """This function returns member_id by tg_id"""
 
@@ -218,7 +218,7 @@ def is_student_name_correct(name, teacher_tg_id):
         return student_id[0][0]
     return False
 
-
+#refactoring
 def get_student_name(student_member_id):
     """This function returns student name (for teacher) by student_member_id"""
     conn, cursor = connect(load_config())
