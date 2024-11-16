@@ -1,0 +1,25 @@
+@startuml
+entity Student{
+    tg_id
+    member_id
+    name
+}
+
+entity Teacher{
+    tg_id
+    member_id
+    name
+}
+
+entity Note{
+    student_member_id
+    number
+    discription
+    number
+    path
+}
+
+Student }o--|| Teacher
+Student ||--o{ Note
+
+@enduml

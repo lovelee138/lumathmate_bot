@@ -1,12 +1,37 @@
 <!DOCTYPE html>
 
 <header>
-    <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
 </header>
 
 <body>
-    <div style="display: flex; flex-direction: row;">
-        <a href="main.html">Назад</a>
-        <h1>Глоссарий</h1>
-    </div>
+  <div style="display: flex; flex-direction: row">
+    <a href="../index.html">Назад</a>
+    <h1>Глоссарий</h1>
+  </div>
+  <h2>Сущности и их аттрибуты</h2>
+  <ul>
+    <li id="student">
+      <b>Student</b> - пользователь-ученик. В таблице
+      <a href="system_model.html#er_physical">all_members</a> имеет значение
+      поля <a href="">status</a> равное "student". При инициализации сущности
+      Student преподавателем ей присваивается собственный
+      <a href="">member_id</a>. При первичной авторизации считывается
+      <a href="">tg_id</a> и записывается в таблицу <a href="">all_members</a>.
+    </li>
+
+    <li id="teacher">
+      <b>Teacher</b> - пользователь-преподаватель. В таблице
+      <a href="system_model.html#er_physical">all_members</a> имеет значение
+      поля <a href="">status</a> равное "student". При первичной авторизации
+      (регистрации) ему присваивается собственный <a href="">member_id</a>.
+    </li>
+
+    <li><b>Note</b> - файл-конспект.</li>
+  </ul>
+
+  <h2>Действия с БД (db_actions.py)</h2>
+  <ul>
+    <li></li>
+  </ul>
 </body>

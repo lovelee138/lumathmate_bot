@@ -33,34 +33,6 @@ def connect(config):
         print(error)
 
 
-def get_last_note(student_id):
-    conn, cursor = connect(load_config())
-
-    request_last_note = (
-        f"SELECT * FROM notes_id WHERE student_id={student_id} ORDER BY date;"
-    )
-    cursor.execute(request_last_note)
-    note_name = f"{cursor.fetchall()[-1][0]}.pdf"
-    cursor.close()
-    conn.close()
-    return note_name
-
-
-def get_students(teacher_username):
-    conn, cursor = connect(load_config())
-
-    request_students = f"SELECT student_username FROM students WHERE teacher_username='{teacher_username}';"
-    cursor.execute(request_students)
-    students_usernames = []
-    for student in cursor.fetchall():
-        students_usernames.append(student[0])
-
-    cursor.close()
-    conn.close()
-
-    return students_usernames
-
-
 def is_signed_up(tg_id: int):
     """In table 'all_members' it tries to find a member with its 'tg_id'.
     Returns member_id, if it was found.

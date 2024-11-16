@@ -1,0 +1,46 @@
+@startuml
+entity all_members {
+    tg_id: BIGINT
+    member_id: BIGINT
+    --
+    status: VARCHAR
+    name: VARCHAR
+}
+
+entity notes_id {
+    student_id (tg_id): BIGINT
+    --
+    note_id: INT
+    data: DATE
+}
+
+entity notes_info {
+    student_id (member_id): INT
+    --
+    note_name: VARCHAR
+    number: INT
+    note_path: VARCHAR
+    file_id: VARCHAR
+    date: DATE
+}
+
+entity number_notes {
+    student_id (member_id): INT
+    --
+    amount: INT
+    last_number: INT
+}
+
+entity teacher_student {
+    student_id (member_id): INT
+    teacher_id (member_id): INT
+    --
+    name (student): VARCHAR 
+}
+
+entity tables_info {
+    name: VARCHAR
+    rows: INT
+    cols: INT
+}
+@enduml
