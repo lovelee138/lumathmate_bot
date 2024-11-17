@@ -32,7 +32,7 @@ def connect(config):
     except (ps.DatabaseError, Exception) as error:
         print(error)
 
-
+#refactored
 def is_signed_up(tg_id: int):
     """In table 'all_members' it tries to find a member with its 'tg_id'.
     Returns member_id, if it was found.
@@ -53,7 +53,7 @@ def is_signed_up(tg_id: int):
 
     return member_id[0][0]
 
-
+#refactored
 def expand_all_members():
     """In table 'all_members' it counts how many ids were created and generates next 100 ids. It fills gaps:
     'tg_id' = 0;
@@ -117,7 +117,7 @@ def get_status_by_id(id: int) -> str:
         return None
     return status[0][0]
 
-
+#refactored
 def is_student_member_id_correct(id: int) -> bool:
     """It returns true if member_id connected to any teacher, otherwise it returns false"""
 
@@ -133,7 +133,7 @@ def is_student_member_id_correct(id: int) -> bool:
         return False
     return True
 
-
+#refactored
 def get_new_member_id(status: str) -> int:
     """This function generates new member_id for teachers, new students.
     Status can be 'student' or 'teacher'."""
@@ -166,7 +166,7 @@ def get_new_member_id(status: str) -> int:
 
     return new_member_id
 
-
+#refactored 
 def add_new_member(tg_id, member_id, name, status):
     """This functions updates table 'all_members'."""
     conn, cursor = connect(load_config())
@@ -197,6 +197,7 @@ def get_member_id_by_tg_id(tg_id):
         return False
 
 
+#refactored
 def is_student_name_correct(name, teacher_tg_id):
     """This function checkes if there is a student with name 'name' for teacher with tg_id 'teacher_tg_id.
     It returns student_id if it's true, else it returns FALSE"""
@@ -218,7 +219,7 @@ def is_student_name_correct(name, teacher_tg_id):
         return student_id[0][0]
     return False
 
-#refactoring
+#refactored
 def get_student_name(student_member_id):
     """This function returns student name (for teacher) by student_member_id"""
     conn, cursor = connect(load_config())
@@ -237,7 +238,7 @@ def get_student_name(student_member_id):
         return student_name[0][0]
     return False
 
-
+# refactored
 def get_last_note_number(student_member_id):
     """This function returns number of last sent note by student_member_id.
     If student has no any notes, returns 0."""
@@ -266,7 +267,7 @@ def get_last_note_number(student_member_id):
         conn.close()
         return 0
 
-
+#refactored
 def is_note_number_correct(student_member_id, number):
     """This function finds if there is such note number in table number_notes.
     It returns True, if number_notes is there, else False."""
@@ -281,7 +282,7 @@ def is_note_number_correct(student_member_id, number):
         return True
     return False
 
-
+#refactored
 def add_new_note(file_name, user_data, path, file_id):
     """This function add new file to notes_info table.
     User_data must be a dict with student_id, date, number, file_id"""
@@ -309,7 +310,7 @@ def add_new_note(file_name, user_data, path, file_id):
     cursor.close()
     conn.close()
 
-
+#refactored
 def get_list_of_notes(student_id: int) -> list:
     """This function return list with note_data for student_id (member_id).
     This notes sorted by date from new to old.
@@ -328,7 +329,7 @@ def get_list_of_notes(student_id: int) -> list:
     conn.close()
     return notes
 
-
+#refactored
 def get_all_students(teacher_id: int) -> list:
     """This function return list with student names of teacher."""
     conn, cursor = connect(load_config())
