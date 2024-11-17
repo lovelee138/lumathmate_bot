@@ -1,20 +1,34 @@
 <!DOCTYPE html>
 
 <header>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="../style.css">
+  <link rel="stylesheet" href="./style_section.css" />
 </header>
 
 <body>
-  <div style="display: flex; flex-direction: row">
-    <a href="../index.html">Назад</a>
-    <h1>Модель системы</h1>
+  <div class="left_bar">
+    <div class="menu">
+      <a href="../index.html">Старт</a>
+      <a href="./glossary.html">Глоссарий</a>
+      <a href="./project_processes.html">Процессы проекта</a>
+      <a href="./system_model.html">Модель системы</a>
+      <a href="./logic.html">Логика проекта</a>
+      <a href="./boundaries.html">Ограничения</a>
+    </div>
   </div>
 
-  <h2>Логическая ER-диаграмма</h2>
-  <p>Основные сущности и связи системы:</p>
-  <img alt="ER-диаграмма" src="img/uml/er_logic.svg"">
+  <div class="main">
+    <h1>Модель системы</h1>
 
-  <h2>Физическая ER-диаграмма</h2>
-  <p id="er_physical">Описание таблиц в БД</p>
-  <img alt="Database" src="img/uml/er_physical.svg" />
+    <h2>Логическая ER-диаграмма</h2>
+    <p>Основные сущности и связи системы:</p>
+    <img alt="ER-диаграмма" src="img/uml/er_logic.svg"">
+
+    <h2>Физическая ER-диаграмма</h2>
+    <p id="er_physical">Описание таблиц в БД</p>
+    <img alt="Database" src="img/uml/er_physical.svg" />
+  </div>
+
+  <div class="right_bar"></div>
+
 </body>

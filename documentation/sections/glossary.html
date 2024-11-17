@@ -1,45 +1,158 @@
 <!DOCTYPE html>
 
 <header>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="../style.css" />
+  <link rel="stylesheet" href="./style_section.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 </header>
 
 <body>
-  <div style="display: flex; flex-direction: row">
-    <a href="../index.html">Назад</a>
-    <h1>Глоссарий</h1>
+
+  <div class="left_bar">
+    <div class="menu">
+      <a href="../index.html">Старт</a>
+      <a href="./glossary.html">Глоссарий</a>
+      <a href="./project_processes.html">Процессы проекта</a>
+      <a href="./system_model.html">Модель системы</a>
+      <a href="./logic.html">Логика проекта</a>
+      <a href="./boundaries.html">Ограничения</a>
+    </div>
   </div>
-  <h2>Сущности и их аттрибуты</h2>
-  <ul>
-    <li id="student">
-      <b>Student</b> - пользователь-ученик. В таблице
-      <a href="system_model.html#er_physical">all_members</a> имеет значение
-      поля <a href>status</a> равное "student". При инициализации сущности
-      Student преподавателем ей присваивается собственный
-      <a href>member_id</a>. При первичной авторизации считывается
-      <a href>tg_id</a> и записывается в таблицу <a href>all_members</a>.
-    </li>
 
-    <li id="teacher">
-      <b>Teacher</b> - пользователь-преподаватель. В таблице
-      <a href="system_model.html#er_physical">all_members</a> имеет значение
-      поля <a href>status</a> равное "student". При первичной авторизации
-      (регистрации) ему присваивается собственный <a href>member_id</a>.
-    </li>
+  <div class="main">
+    <h1>Глоссарий</h1>
+    <h2>Сущности и их аттрибуты</h2>
+    <ul>
+      <li id="student">
+        <b>Student</b> - пользователь-ученик. В таблице
+        <a href="system_model.html#er_physical">all_members</a> имеет значение
+        поля <a href>status</a> равное "student".<br /> При инициализации
+        сущности
+        Student преподавателем ей присваивается собственный
+        <a href>member_id</a>. <br />При первичной авторизации считывается
+        <a href>tg_id</a> и записывается в таблицу <a href>all_members</a>.
+      </li>
 
-    <li><b>Note</b> - файл-конспект.</li>
-  </ul>
+      <li id="teacher">
+        <b>Teacher</b> - пользователь-преподаватель. В таблице
+        <a href="system_model.html#er_physical">all_members</a> имеет значение
+        поля <a href>status</a> равное "student".<br />При первичной авторизации
+        (регистрации) ему присваивается собственный <a href>member_id</a>
 
-  <h2>Действия с БД (db module)</h2>
-  <h3>get-actions:</h3>
-  <ul>
-    <li><b>member_id</b> - возвращает <a href>member_id</a> по его <a
-        href>tg_id</a>. Если такого пользователя нет, то вызывает исключение.
-      Единственная функция в get-actions, которая обрабатывает tg_id.</li>
-    <li><b>status_by_id</b> - возвращает статус пользователя
-      ("student"/"teacher") по его <a href>member_id</a>. Если такого
-      пользователя нет, то вызывает исключение.</li>
-    <li><b>name_by_id</b> - возвращает имя пользователя по его <a
-        href>member_id</a></li>
-  </ul>
+      </li>
+
+      <li><b>Note</b> - файл-конспект.</li>
+      <br />
+      <li><b>Имя</b> - общий атрибут для всех участников. Записан в таблице <a
+          href="system_model.html#er_physical"></a> и используется ботом для
+        сообщений с обращениями.</li>
+
+      <li><b>Имя (для учителя)</b> - имя, которое задает преподаватель ученику.
+        В
+        последствии определяет ученика по этому имени. Может не совпадать с
+        <b>именем</b>.</li>
+    </ul>
+
+    <h2>Действия с БД (db module)</h2>
+    <h3>get-actions:</h3>
+    <ul>
+      <li><b>member_id(tg_id)</b> - возвращает <a href>member_id</a> по его <a
+          href>tg_id</a>. Если такого пользователя нет, то вызывает
+        исключение.<br />
+        Единственная функция в get-actions, которая обрабатывает tg_id.</li>
+
+      <li><b>status_by_id(id)</b> - возвращает статус пользователя
+        ("student"/"teacher") по его <a href>member_id</a>. <br />Если такого
+        пользователя нет, то вызывает исключение.</li>
+
+      <li><b>name_by_id(id_teac, id_stud)</b> - возвращает имя пользователя по
+        его
+        <a
+          href>member_id</a></li>
+
+      <li><b>last_note_number(id)</b> - возвращает номер последнего сохраненного
+        конспекта. <br />Необходимо для
+        автоматического проставления номера
+        конспекта для работы команды <a href>/send_note"</a></li>
+
+      <li><b>get_list_of_notes(id_stud)</b> - возвращает список конспектов для
+        студента по
+        его member_id. <br />Список отсортирован по дате от новых к старым.
+        Необходимо
+        для функции <a href>get_note</a>.<br>Информация о конспекте (элемент
+        возвращаемого списка) является словарем с ключами <it>description</it>,
+        <it>path_to_txt</it>,<it>number</it>, <it>date</it>, <it>file_id</it>,
+        <it>file_path</it>.</li>
+
+      <li><b>all_students(id_teac)</b> - возвращает список имен (для учителей)
+        студентов, которые являются учениками преподавателя с указанным
+        member-id.<br />
+        Необходимо для работы команды <a href>/show_all_students</a>.</li>
+
+      <li><b>new_member_id(status)</b> - возвращает новый сгенерированный
+        member-id. <br />В таблицу <a
+          href="system_model.html#er_physical">all_members</a> добавляется новая
+        запись, содержащая сгенерированный member-id и статус пользователя.</li>
+
+      <li><b>member_id_by_name(name, id_teac)</b> - возвращает member-id
+        студента
+        с указанным именем name, привязанного к указанному учителю.</li>
+    </ul>
+
+    <h3>check-actions</h3>
+
+    <ul>
+      <li><b>signed_up(tg_id)</b> - проверяет, авторизован ли пользователь с
+        указанным
+        tg-id<br />
+        Возвращает member-id, если такой был найден.<br />
+        Иначе возвращает False.</li>
+
+      <li><b>stud_member_id_correct(id)</b> - проверяет, привязан ли ученик с
+        указанным member-id к какому-либо учителю. <br />
+        Обращается к таблице <a
+          href="system_model.html#er_physical">teacher_student</a>.</li>
+
+      <li><b>stud_name_correct(name, id_teac)</b> - проверяет, есть ли студент с
+        указанным именем(для учителя) у указанного учителя.</li>
+
+      <li><b>note_num_correct(id, num)</b> - проверяет, есть ли коснпект с
+        указанным номером в таблице <a
+          href="system_model.html#er_physical">number_notes</a> у указанного
+        ученика.</li>
+    </ul>
+
+    <h3>add-actions</h3>
+    <ul>
+      <li><b>new_note(file_name, note_data, path)</b> - добавляет информацию о
+        новом конспекте в таблицу <a
+          href="system_model.html#er_physical">notes_info</a>.<br />
+        Параметры:
+        <ul>
+          <li>file_name - имя файла</li>
+          <li>note_data - словарь с ключами <it>student_id</it>,
+            <it>date</it>,<it>number</it>, <it>file_id</it> <a
+              href="https://core.telegram.org/bots/api">(см. Telegram Bot
+              API)</a></li>
+          <li>path - путь к файлу</li>
+        </ul></li>
+
+      <li><b>new_member(tg_id, member_id, name, status)</b> - добавляет нового
+        участника в таблицу <a
+          href="system_model.html#er_physical">all_members</a>.</li>
+    </ul>
+
+    <h3>other-actions</h3>
+
+    <ul>
+      <li><b>expand_all_members()</b> - расширяет таблицу <a
+          href="system_model.html#er_physical">all_members</a>, добавляя 100
+        новых
+        значений member-id в случайном порядке.<br />Необходимо для генерации
+        нового member-id.</li>
+    </ul>
+  </div>
+
+  <div class="right_bar"></div>
+
 </body>

@@ -1,0 +1,20 @@
+a:visited {
+  color: blue;
+}
+
+li {
+  margin-bottom: 10px;
+  margin-top: 10px;
+}
+
+@media (min-width: 1200px) {
+  .left_bar {
+    width: 20vw;
+  }
+  .main {
+    width: 60vw;
+  }
+  .right_bar {
+    width: 20vw;
+  }
+}
