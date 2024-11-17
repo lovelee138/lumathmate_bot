@@ -2,7 +2,7 @@ import asyncio
 from aiogram import Bot, Dispatcher
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 from handlers import authorization, commands, send_note, get_note
-from db_actions import *
+from db import load_config
 import logging
 
 

@@ -1,8 +1,8 @@
 from aiogram import Bot, Router, types
 from aiogram.filters import Command
 from aiogram.enums import ParseMode
-from db_actions import *
 from .constants import *
+import db.get as get
 
 
 router = Router()
@@ -12,7 +12,8 @@ router = Router()
 
 @router.message(Command("help"))
 async def help_command(message: types.message):
-    status = get_status_by_id(message.from_user.id)
+    id_stud = get.member_id(message.from_user.id)
+    status = get.status_by_id(id_stud)
     if status == "teacher":
         await message.answer(HELP_COMMAND_TEACHER, parse_mode=ParseMode.HTML)
     elif status == "student":
@@ -32,16 +33,16 @@ async def help_command(message: types.message):
 # For teachers
 @router.message(Command("show_all_students"))
 async def send_all_students(message: types.message):
-    user_id = message.from_user.id
-    status = get_status_by_id(user_id)
+    print(message.from_user.id)
+    member_id = get.member_id(message.from_user.id)
+    status = get.status_by_id(member_id)
     if status == "student":
         await message.answer(
             "Упс! Эта функция не для вас! \
             Нажмите /help, чтобы получить список функций."
         )
     else:
-        member_id = get_member_id_by_tg_id(user_id)
-        student_list = get_all_students(member_id)
+        student_list = get.all_students(member_id)
         student_list_text = ""
         for id, name in student_list:
             student_list_text += "{} ({})\n".format(name, id)

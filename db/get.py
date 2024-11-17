@@ -1,25 +1,26 @@
 from db import connect
-import check
+import db.check as check
 from datetime import datetime
-from other import expand_all_members
+from db.other import expand_all_members
 
-def member_id(tg_id: int) -> int:
-    """It returns status of user by its tg-id. If tg-id is not defined in table 'all_members' then it raises an Exception."""
+
+def member_id(tg_id):
+    """This function returns member_id by tg_id"""
 
     conn, cursor = connect()
-
-    request = f"SELECT status FROM all_members WHERE tg_id={id};"
+    request = f"SELECT member_id FROM all_members WHERE tg_id='{tg_id}';"
     cursor.execute(request)
-    status = cursor.fetchall()
+
+    member_id = cursor.fetchall()
 
     cursor.close()
     conn.close()
-
-    if len(status) == 0:
+    if len(member_id)!=0:
+        return member_id[0][0]
+    else:
         raise Exception(
-            f"There's no member with tg-id={tg_id}"
+            f"There's no member with tg-id={id}"
         )
-    return status[0][0]
 
 
 def name_by_id(id: int) -> str:
@@ -109,7 +110,7 @@ def last_note_number(id):
         return 0
 
 
-def get_list_of_notes(id_stud: int) -> list:
+def list_of_notes(id_stud: int) -> list:
     """This function return list with note_data for student by member_id.
     This notes sorted by date from new to old.
     note_data - dict{"description": <path_to_txt>, "number": n, "date": date, "file_id": file_id, "file_path": <full_path_to_file}.
@@ -117,7 +118,7 @@ def get_list_of_notes(id_stud: int) -> list:
     """
     conn, cursor = connect()
 
-    request = f"SELECT * from notes_info WHERE id_stud='{id_stud}';"
+    request = f"SELECT * from notes_info WHERE student_id='{id_stud}';"
 
     cursor.execute(request)
 
@@ -140,7 +141,7 @@ def all_students(id_teac: int) -> list:
     conn, cursor = connect()
 
     request = f"SELECT student_id, name FROM teacher_student WHERE \
-        id_teac ={id_teac};"
+        teacher_id={id_teac};"
     cursor.execute(request)
 
     students = cursor.fetchall()

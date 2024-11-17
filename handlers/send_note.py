@@ -2,8 +2,10 @@ from aiogram import Bot, Router, types, F
 from aiogram.filters import Command, StateFilter, CommandObject
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import StatesGroup, State
-from db_actions import *
 from key_boards import confirmation_kb
+import db.get as get
+import db.check as check
+import db.add as add
 
 
 router = Router()
@@ -21,7 +23,7 @@ class SendingNote(StatesGroup):
 async def confirmation(message: types.message, state: FSMContext):
     user_data = await state.get_data()
     await message.answer("Подтвердите данные о конспекте:")
-    student_name = get_student_name(user_data["student_id"])
+    student_name = get.name_by_id(user_data["student_id"])
     text = f"""
 Имя ученика: {student_name}
 Описание конспекта: {user_data["description"]}
@@ -35,8 +37,8 @@ async def confirmation(message: types.message, state: FSMContext):
 
 @router.message(StateFilter(None), Command("send_note"))
 async def send_note(message: types.message, state: FSMContext, command: CommandObject):
-    tg_id = message.from_user.id
-    status = get_status_by_id(tg_id)
+    member_id = get.member_id(message.from_user.id)
+    status = get.status_by_id(member_id)
     if status == "teacher":
         await message.answer("Ура! Еще один файл со знаниями будет загружен!")
         await state.set_state(SendingNote.getting_description)
@@ -58,9 +60,10 @@ async def send_note(message: types.message, state: FSMContext, command: CommandO
     )
 
     if not (command.args is None):
-        student_id = is_student_name_correct(command.args, tg_id)
-        if student_id:
-            await state.update_data(student_id=student_id)
+        is_correct = check.stud_name_correct(command.args, member_id)
+        if is_correct:
+            id_stud = get.member_id_by_name(command.args, member_id)
+            await state.update_data(student_id=id_stud)
             await message.answer(
                 'Напишите описание этого конспекта. \
                     Если описание не нужно, введите "далее"'
@@ -88,10 +91,10 @@ async def cancsel(message: types.message, state: FSMContext):
 
 @router.message(SendingNote.identification)
 async def student_name(message: types.message, state: FSMContext):
-    tg_id = message.from_user.id
-    student_id = is_student_name_correct(message.text, tg_id)
+    member_id = get.member_id(message.from_user.id)
+    student_id = check.stud_name_correct(message.text, member_id)
     if student_id:
-        await state.update_data(student_id=student_id)
+        await state.update_data(student_id=get.member_id_by_name(message.text, member_id))
         await message.answer(
             'Напишите описание этого конспекта. Если описание не нужно, введите "далее"'
         )
@@ -119,7 +122,7 @@ async def description(message: types.message, state: FSMContext):
 
     user_data = await state.get_data()
 
-    number = get_last_note_number(user_data["student_id"])
+    number = get.last_note_number(user_data["student_id"])
 
     await state.update_data(number=number + 1)
 
@@ -132,7 +135,7 @@ async def get_file(message: types.message, state: FSMContext, bot: Bot):
     name = f"{user_data['student_id']}_{user_data['date']}_{user_data['number']}.pdf"
     path = f"./notes/"
     await bot.download(message.document, destination=path + name)
-    add_new_note(name, user_data, path, message.document.file_id)
+    add.new_note(name, user_data, path)
     await message.answer("Файл успешно сохранен")
     await state.clear()
 
@@ -174,7 +177,7 @@ async def get_number(message: types.message, state: FSMContext):
         n = int(message.text)
         user_data = await state.get_data()
         student_id = user_data["student_id"]
-        if not is_note_number_correct(student_id, n):
+        if not check.note_num_correct(student_id, n):
             await state.update_data(number=n)
             await confirmation(message, state)
         else:

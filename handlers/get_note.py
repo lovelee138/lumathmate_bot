@@ -5,7 +5,8 @@ from aiogram.fsm.context import FSMContext
 from aiogram.filters import Command, StateFilter
 import aiogram
 from key_boards import choice_kb
-from db_actions import *
+import db.get as get
+import db.check as check
 
 
 MAX_VISIBLE = 3
@@ -58,8 +59,8 @@ async def send_message_with_keyboard_choice(state: FSMContext, direction, to_id,
 
 @router.message(Command("get_note"))
 async def get_note(message: types.message, state: FSMContext, bot: Bot):
-    student_id = get_member_id_by_tg_id(message.from_user.id)
-    status = get_status_by_id(message.from_user.id)
+    id_stud = get.member_id(message.from_user.id)
+    status = get.status_by_id(id_stud)
 
     if status == "teacher":
         await message.answer(
@@ -68,7 +69,7 @@ async def get_note(message: types.message, state: FSMContext, bot: Bot):
         )
         return
     await state.set_state(ShowingNotes.showing)
-    notes = get_list_of_notes(student_id)
+    notes = get.list_of_notes(id_stud)
     await state.set_data(
         {
             "last_displayed": -1,

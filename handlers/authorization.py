@@ -2,13 +2,9 @@ from aiogram import Bot, Router, types, F
 from aiogram.filters import Command, StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import StatesGroup, State
-from db_actions import (
-    is_signed_up,
-    get_name_by_id,
-    is_student_member_id_correct,
-    get_new_member_id,
-    add_new_member,
-)
+import db.get as get
+import db.check as check
+import db.add as add
 from key_boards import authorization_kb
 
 
@@ -24,10 +20,10 @@ class Authorization(StatesGroup):
 @router.message(StateFilter(None), Command("start"))
 async def cmd_start(message: types.message, state: FSMContext, bot: Bot):
     user_tg_id = message.from_user.id
-    authorizied_user_id = is_signed_up(user_tg_id)
+    authorizied_user_id = check.signed_up(user_tg_id)
 
     if authorizied_user_id:
-        authorizied_user_name = get_name_by_id(authorizied_user_id)
+        authorizied_user_name = get.name_by_id(authorizied_user_id)
         await bot.send_message(
             user_tg_id,
             f"Добро пожаловать, {authorizied_user_name}!\nНажмите /help, чтобы посмотреть доступные команды.",
@@ -58,7 +54,7 @@ async def sign_up(callback: types.CallbackQuery, state: FSMContext, bot: Bot):
             "Я буду рад помочь Вам в преподавании! Давайте знакомиться. Меня зовут lu_mathmate_bot. Для друзей просто lu. Как я могу Вас называть?",
         )
 
-        new_member_id = get_new_member_id("teacher")
+        new_member_id = get.new_member_id("teacher")
         await state.update_data(status="teacher", member_id=new_member_id)
         await state.set_state(Authorization.inputing_name)
     elif status == "student":
@@ -76,7 +72,7 @@ async def check_new_student(message: types.message, bot: Bot, state: FSMContext)
     user_tg_id = message.from_user.id
     member_id = int(message.text)
 
-    if is_student_member_id_correct(member_id):
+    if check.stud_member_id_correct(member_id):
         await bot.send_message(
             user_tg_id,
             "Отлично! Я Вас нашёл! Самое время познакомиться. Меня зовут lu_mathmate_bot. Для друзей просто lu. Как я могу к Вам обращаться?",
@@ -96,7 +92,7 @@ async def set_name(message: types.message, bot: Bot, state: FSMContext):
     await state.update_data(name=message.text, tg_id=message.from_user.id)
 
     user_data = await state.get_data()
-    add_new_member(
+    add.new_member(
         user_data["tg_id"],
         user_data["member_id"],
         user_data["name"],

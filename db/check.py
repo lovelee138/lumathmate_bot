@@ -1,5 +1,5 @@
 from db import connect
-import get
+import db.get as get
 
 
 def signed_up(tg_id: int):
@@ -40,7 +40,7 @@ def stud_member_id_correct(id: int) -> bool:
 
 
 def stud_name_correct(name, id_teac):
-    """This function checkes if there is a student with name 'name' for teacher with tg_id 'teacher_tg_id.
+    """This function checkes if there is a student with name 'name' for teacher with member_id 'teacher_tg_id.
     """
 
     conn, cursor = connect()
@@ -52,7 +52,7 @@ def stud_name_correct(name, id_teac):
     cursor.close()
     conn.close()
 
-    if student_id:
+    if len(student_id)!=0:
         return True
     return False
 
@@ -62,7 +62,7 @@ def note_num_correct(id, num):
     It returns True, if num_notes is there, else False."""
     conn, cursor = connect()
 
-    request = f"SELECT num FROM notes_info WHERE student_id='{id}';"
+    request = f"SELECT number FROM notes_info WHERE student_id='{id}';"
     cursor.execute(request)
 
     nums = list(key[0] for key in cursor.fetchall())
