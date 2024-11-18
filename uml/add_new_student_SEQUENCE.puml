@@ -1,0 +1,33 @@
+@startuml
+actor Member as mmb 
+participant Bot as bot 
+database DataBase as db 
+
+mmb -> bot : Вызов команды "/add_new_student"
+bot -> db : Запрос статуса участника
+db -> db : Получение статуса ученика
+
+alt "status = student"
+db --> bot: Статус "Ученик"
+bot --> mmb : Эта команда недоступна
+else "status = teacher"
+db -> bot: Статус "Учитель"
+end
+loop Пока не подтверждены корректные данные
+bot -> mmb : Запрос имени нового ученика
+mmb --> bot : Предоставление имени 
+bot -> mmb : Запрос подтверждения введенных данных
+mmb -> bot : Ответ пользователя
+alt "Не подтверждено"
+bot -> mmb : Повторный запрос имени
+mmb --> bot : Повторное предоставление имени
+else "Подтверждено"
+end 
+end
+bot -> db : Запрос нового member-id
+db -> db : Генерация нового member-id
+db -> db : Запись в таблицу all-members нового ученика
+db --> bot : Предоставление нового member-id
+bot -> db : Запрос на добавление нового ученика к учителю
+db -> db : Запись в таблицу teacher_student
+bot --> mmb : Предоставление member-id
