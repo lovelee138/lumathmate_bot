@@ -23,6 +23,11 @@ async def cancel(message: types.message, state: FSMContext):
 async def add_new_student_start(message: types.message, state: FSMContext):
     id_teac = get.member_id(message.from_user.id)
 
+    status = get.status_by_id(id_teac)
+    if status == "student":
+        await message.answer("Ой! К сожалению, вам такая команда не доступна :(")
+        return
+    
     await state.set_data({"id_teac": id_teac, "name_stud": None, "id_stud": None})
     await message.answer("Давайте добавим нового ученика! Введите его имя:")
     await state.set_state(NewStudent.name)
