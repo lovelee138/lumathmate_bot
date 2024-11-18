@@ -40,3 +40,16 @@ def new_note(file_name, note_data, path):
     conn.commit()
     cursor.close()
     conn.close()
+
+
+def new_student(id_stud, id_teac, name):
+    """This function adds note (student_id, teacher_id, name(student)) in table 'teacher_student'"""
+
+    conn, cursor = connect()
+
+    request = f"INSERT INTO teacher_student VALUES({id_stud}, {id_teac}, '{name}');"
+    cursor.execute(request)
+
+    conn.commit()
+    cursor.close()
+    conn.close()
