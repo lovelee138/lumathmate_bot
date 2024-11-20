@@ -5,7 +5,7 @@ def get_keyboard_choice(start: int, end: int, next=False, previous=False):
     buttons = [
         [
             InlineKeyboardButton(text=f"{i}", callback_data=f"choice_{i}")
-            for i in range(start, end)
+            for i in range(start, end + 1)
         ]
     ]
     if next:

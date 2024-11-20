@@ -15,9 +15,6 @@ async def main():
 
     logging.basicConfig(level=logging.INFO)
 
-    start_kb = [[KeyboardButton(text="/start")]]
-    kb = ReplyKeyboardMarkup(keyboard=start_kb, resize_keyboard=True)
-
     dp.include_routers(authorization.router)
     dp.include_routers(commands.router)
     dp.include_routers(send_note.router)

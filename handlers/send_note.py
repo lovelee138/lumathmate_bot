@@ -17,10 +17,17 @@ class SendingNote(StatesGroup):
     getting_number = State()
     getting_date = State()
     getting_file = State()
-    confirmation = State()
+    confirmation_info = State()
+    confirmation_send = State()
+    sending = State()
 
 
-async def confirmation(message: types.message, state: FSMContext):
+async def send_note_to_group(state):
+
+    await state.clear()
+
+
+async def confirmation_info(message: types.message, state: FSMContext):
     user_data = await state.get_data()
     await message.answer("Подтвердите данные о конспекте:")
     student_name = get.name_by_id(user_data["student_id"])
@@ -30,9 +37,9 @@ async def confirmation(message: types.message, state: FSMContext):
 Дата конспекта: {user_data["date"]}
 Номер конспекта: {user_data["number"]}
     """
-    kb = confirmation_kb.get_keyboard_confirm()
+    kb = confirmation_kb.get_keyboard_confirm("info")
     await message.answer(text, reply_markup=kb)
-    await state.set_state(SendingNote.confirmation)
+    await state.set_state(SendingNote.confirmation_info)
 
 
 @router.message(StateFilter(None), Command("send_note"))
@@ -104,7 +111,7 @@ async def student_name(message: types.message, state: FSMContext):
         if user_data["description"] is None:
             await state.set_state(SendingNote.getting_description)
         else:
-            await confirmation(message, state)
+            await confirmation_info(message, state)
     else:
         await message.answer("Такого ученика нет, попробуйте еще раз:")
         await state.set_state(SendingNote.identification)
@@ -128,32 +135,49 @@ async def description(message: types.message, state: FSMContext):
 
     await state.update_data(number=number + 1)
 
-    await confirmation(message, state)
+    await confirmation_info(message, state)
 
 
 @router.message(F.document, SendingNote.getting_file)
 async def get_file(message: types.message, state: FSMContext, bot: Bot):
     user_data = await state.get_data()
-    name = f"{user_data['student_id']}_{user_data['date']}"
+    name = f"{user_data['student_id']}_{user_data['date']}_{user_data['number']}"
     path = f"./notes/"
     user_data["file_id"] = message.document.file_id
     await bot.download(message.document, destination=path + name)
     add.new_note(name, user_data, path)
     await message.answer("Файл успешно сохранен")
-    await state.clear()
+
+    kb = confirmation_kb.get_keyboard_confirm("send")
+    await message.answer("Хотите отправить конспект ученику?", reply_markup=kb)
+    await state.set_state(SendingNote.confirmation_send)
 
 
-@router.callback_query(F.data == "confirmed", SendingNote.confirmation)
-async def data_confirmed(callback: types.CallbackQuery, bot: Bot, state: FSMContext):
+@router.callback_query(F.data == "confirmed_info", SendingNote.confirmation_info)
+async def data_confirmed(callback: types.CallbackQuery, state: FSMContext):
     await callback.message.answer("Отлично! Теперь отправьте pdf-файл с конспектом")
     await state.set_state(SendingNote.getting_file)
     await callback.answer()
 
 
-@router.callback_query(F.data == "non_confirmed", SendingNote.confirmation)
+@router.callback_query(F.data == "non_confirmed_info", SendingNote.confirmation_info)
 async def data_confirmed(callback: types.CallbackQuery, bot: Bot, state: FSMContext):
     kb = confirmation_kb.get_keyboard_edit_choice()
-    await callback.answer("Что бы вы хотели исправить?", reply_markup=kb)
+    await callback.message.answer("Что бы вы хотели исправить?", reply_markup=kb)
+    await callback.answer()
+
+
+@router.callback_query(F.data == "confirmed_send", SendingNote.confirmation_send)
+async def data_confirmed(callback: types.CallbackQuery, bot: Bot, state: FSMContext):
+    await callback.message.answer("Отлично! Файл будет отправлен в группу!")
+    send_note_to_group(state)
+    await callback.answer()
+
+
+@router.callback_query(F.data == "non_confirmed_send", SendingNote.confirmation_send)
+async def data_confirmed(callback: types.CallbackQuery, bot: Bot, state: FSMContext):
+    await callback.message.answer("Хорошо!\nОтправка конспекта окончена.")
+    await state.clear()
     await callback.answer()
 
 
@@ -165,7 +189,7 @@ async def get_date(message: types.message, state: FSMContext):
         int(month)
         int(day)
         await state.update_data(date=message.text)
-        await confirmation(message, state)
+        await confirmation_info(message, state)
     except Exception:
         await message.answer("Неверный формат! Попробуйте еще раз.\nПример: 2024-01-31")
 
@@ -178,7 +202,7 @@ async def get_number(message: types.message, state: FSMContext):
         student_id = user_data["student_id"]
         if not check.note_num_correct(student_id, n):
             await state.update_data(number=n)
-            await confirmation(message, state)
+            await confirmation_info(message, state)
         else:
             await message.answer("Такой номер конспекта уже есть! Попробуйте еще раз.")
     except ValueError:

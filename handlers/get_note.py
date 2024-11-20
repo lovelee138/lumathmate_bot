@@ -32,28 +32,28 @@ async def send_message_with_keyboard_choice(state: FSMContext, direction, messag
 
     if direction == 1:
         start = displayed_data["last_displayed"] + 1
-        end = min(start + MAX_VISIBLE, len(notes))
+        end = min(start + MAX_VISIBLE - 1, len(notes))
     else:
-        end = displayed_data["last_displayed"]
-        start = max(end - MAX_VISIBLE, 0)
+        end = ((displayed_data["last_displayed"] - 1) // MAX_VISIBLE) * MAX_VISIBLE
+        start = max(end - MAX_VISIBLE + 1, 1)
 
-    for i in range(start, end):
-        descriptions += f"{i+1}. "
-        descr_path = notes[i][3] + notes[i][0] + "_description.txt"
+    for i in range(start, end + 1):
+        descriptions += f"{i}. "
+        descr_path = notes[i - 1][3] + notes[i - 1][0] + "_description.txt"
         with open(descr_path, "r") as file:
             descriptions += file.read()
         descriptions += "\n"
 
     next = end < len(notes)
-    previous = start > 0
+    previous = start > 1
 
-    kb = choice_kb.get_keyboard_choice(start + 1, end + 1, next, previous)
+    kb = choice_kb.get_keyboard_choice(start, end, next, previous)
     await message.answer(
         f"Выберите конспект, который вы хотите получить:\n{descriptions}",
         reply_markup=kb,
     )
 
-    await state.update_data({"last_displayed": end - 1})
+    await state.update_data({"last_displayed": end})
 
 
 @router.message(Command("get_note"))
@@ -71,7 +71,7 @@ async def get_note(message: types.message, state: FSMContext, bot: Bot):
     notes = get.list_of_notes(id_stud)
     await state.set_data(
         {
-            "last_displayed": -1,
+            "last_displayed": 0,
             "notes": notes,
         }
     )
@@ -81,7 +81,6 @@ async def get_note(message: types.message, state: FSMContext, bot: Bot):
 
 @router.callback_query(F.data.startswith("choice_"), StateFilter(ShowingNotes))
 async def answer_to_choice(callback: types.callback_query, state: FSMContext, bot: Bot):
-    user = callback.from_user.id
     choice = callback.data.split("_")[1]
     if choice == "next":
         await send_message_with_keyboard_choice(state, 1, callback.message)
