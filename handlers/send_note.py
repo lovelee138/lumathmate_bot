@@ -94,7 +94,9 @@ async def student_name(message: types.message, state: FSMContext):
     member_id = get.member_id(message.from_user.id)
     student_id = check.stud_name_correct(message.text, member_id)
     if student_id:
-        await state.update_data(student_id=get.member_id_by_name(message.text, member_id))
+        await state.update_data(
+            student_id=get.member_id_by_name(message.text, member_id)
+        )
         await message.answer(
             'Напишите описание этого конспекта. Если описание не нужно, введите "далее"'
         )
@@ -132,8 +134,9 @@ async def description(message: types.message, state: FSMContext):
 @router.message(F.document, SendingNote.getting_file)
 async def get_file(message: types.message, state: FSMContext, bot: Bot):
     user_data = await state.get_data()
-    name = f"{user_data['student_id']}_{user_data['date']}_{user_data['number']}.pdf"
+    name = f"{user_data['student_id']}_{user_data['date']}"
     path = f"./notes/"
+    user_data["file_id"] = message.document.file_id
     await bot.download(message.document, destination=path + name)
     add.new_note(name, user_data, path)
     await message.answer("Файл успешно сохранен")
@@ -142,9 +145,7 @@ async def get_file(message: types.message, state: FSMContext, bot: Bot):
 
 @router.callback_query(F.data == "confirmed", SendingNote.confirmation)
 async def data_confirmed(callback: types.CallbackQuery, bot: Bot, state: FSMContext):
-    await bot.send_message(
-        callback.from_user.id, "Отлично! Теперь отправьте pdf-файл с конспектом"
-    )
+    await callback.message.answer("Отлично! Теперь отправьте pdf-файл с конспектом")
     await state.set_state(SendingNote.getting_file)
     await callback.answer()
 
@@ -152,9 +153,7 @@ async def data_confirmed(callback: types.CallbackQuery, bot: Bot, state: FSMCont
 @router.callback_query(F.data == "non_confirmed", SendingNote.confirmation)
 async def data_confirmed(callback: types.CallbackQuery, bot: Bot, state: FSMContext):
     kb = confirmation_kb.get_keyboard_edit_choice()
-    await bot.send_message(
-        callback.from_user.id, "Что бы вы хотели исправить?", reply_markup=kb
-    )
+    await callback.answer("Что бы вы хотели исправить?", reply_markup=kb)
     await callback.answer()
 
 
@@ -188,27 +187,23 @@ async def get_number(message: types.message, state: FSMContext):
 
 @router.callback_query(F.data.startswith("edit_"))
 async def edit(callback: types.CallbackQuery, state: FSMContext, bot: Bot):
-    user_id = callback.from_user.id
+    message = callback.message
     choice = callback.data.split("_")[1]
 
     if choice == "name":
-        await bot.send_message(
-            user_id,
-            "Введите имя ученика, которому вы хотите отправить конспект. Чтобы посмотреть список всех учеников нажмите /show_all_students",
+        await message.answer(
+            "Введите имя ученика, которому вы хотите отправить конспект. Чтобы посмотреть список всех учеников нажмите /show_all_students"
         )
         await state.set_state(SendingNote.identification)
     elif choice == "description":
-        await bot.send_message(
-            user_id,
-            'Напишите описание этого конспекта. Если описание не нужно, введите "далее"',
+        await message.answer(
+            'Напишите описание этого конспекта. Если описание не нужно, введите "далее"'
         )
         await state.set_state(SendingNote.getting_description)
     elif choice == "date":
-        await bot.send_message(
-            user_id, "Введите дату в формате yyyy-mm-dd. Например, 2024-01-31"
-        )
+        await message.answer("Введите дату в формате yyyy-mm-dd. Например, 2024-01-31")
         await state.set_state(SendingNote.getting_date)
     elif choice == "number":
-        await bot.send_message(user_id, "Введите целое число - номер конспекта")
+        await message.asnwer("Введите целое число - номер конспекта")
         await state.set_state(SendingNote.getting_number)
     await callback.answer()

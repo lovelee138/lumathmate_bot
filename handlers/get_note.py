@@ -25,7 +25,7 @@ async def cancel(message: types.message, state: FSMContext):
     await state.clear()
 
 
-async def send_message_with_keyboard_choice(state: FSMContext, direction, to_id, bot):
+async def send_message_with_keyboard_choice(state: FSMContext, direction, message):
     descriptions = ""
     displayed_data = await state.get_data()
     notes = displayed_data["notes"]
@@ -48,8 +48,7 @@ async def send_message_with_keyboard_choice(state: FSMContext, direction, to_id,
     previous = start > 0
 
     kb = choice_kb.get_keyboard_choice(start + 1, end + 1, next, previous)
-    await bot.send_message(
-        to_id,
+    await message.answer(
         f"Выберите конспект, который вы хотите получить:\n{descriptions}",
         reply_markup=kb,
     )
@@ -77,7 +76,7 @@ async def get_note(message: types.message, state: FSMContext, bot: Bot):
         }
     )
 
-    await send_message_with_keyboard_choice(state, 1, message.from_user.id, bot)
+    await send_message_with_keyboard_choice(state, 1, message)
 
 
 @router.callback_query(F.data.startswith("choice_"), StateFilter(ShowingNotes))
@@ -85,18 +84,18 @@ async def answer_to_choice(callback: types.callback_query, state: FSMContext, bo
     user = callback.from_user.id
     choice = callback.data.split("_")[1]
     if choice == "next":
-        await send_message_with_keyboard_choice(state, 1, user, bot)
+        await send_message_with_keyboard_choice(state, 1, callback.message)
     elif choice == "previous":
-        await send_message_with_keyboard_choice(state, -1, user, bot)
+        await send_message_with_keyboard_choice(state, -1, callback.message)
     elif choice.isdigit():
         user_data = await state.get_data()
         note = user_data["notes"][int(choice) - 1]
         try:
             file_id = note[4]
-            await bot.send_document(user, file_id)
+            await callback.message.answer_document(file_id)
         except Exception:
             document = FSInputFile(note[3] + note[0])
-            await bot.send_document(user, document)
+            await callback.message.answer_document(document)
 
         await state.clear()
     await callback.answer()
@@ -105,8 +104,7 @@ async def answer_to_choice(callback: types.callback_query, state: FSMContext, bo
 @router.callback_query(F.data.startswith("choice_"), StateFilter(None))
 async def answer_to_incorrect_choice(callback: types.callback_query, bot: Bot):
     await callback.answer("Ошибка! Кнопка из старого запроса.")
-    await bot.send_message(
-        callback.from_user.id,
+    await callback.message.answer(
         "Нажмите /help, чтобы увидеть список доступных\
-                           функций.",
+         функций.",
     )
